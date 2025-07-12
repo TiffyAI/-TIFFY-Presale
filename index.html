@@ -117,7 +117,7 @@
 
         const usdValue = amount * currencyRates[currency];
         const baseTiffy = usdValue / tiffyToUsd;
-        const bonusTiffy = baseTiffy * 1.5; // ✅ 50% bonus
+        const bonusTiffy = baseTiffy * 2;  // ✅ 2x TIFFY as requested
         const roundedTiffy = Math.round(bonusTiffy * 100) / 100;
 
         const paypalLink = `https://www.paypal.me/CatHostProWebsites/${amount}`;
@@ -125,7 +125,7 @@
         resultDiv.innerHTML = `
           <p>💱 <strong>${amount} ${currency}</strong> = approx <strong>${usdValue.toFixed(2)} USD</strong></p>
           <p>🎯 Current TIFFY Price: <strong>$${tiffyToUsd.toFixed(4)}</strong></p>
-          <p>🔥 Presale Bonus (50% extra): <strong>${roundedTiffy} TIFFY</strong></p>
+          <p>🔥 You will receive: <strong>${roundedTiffy} TIFFY</strong> (2× Presale Rate)</p>
           <p>👉 <a href="${paypalLink}" target="_blank">Click here to pay ${amount} ${currency} via PayPal</a></p>
           <p>📩 After payment, <strong><a href="https://wa.me/c/27766314246" target="_blank">send your BNB wallet address via WhatsApp</a></strong>.</p>
           <p>🕓 Price last updated: <code>${lastUpdated}</code></p>
