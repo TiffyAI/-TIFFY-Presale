@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TIFFY Presale Calculator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('TIFFY.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    }
+    .container {
+      max-width: 600px;
+      margin: 60px auto;
+      background: rgba(0, 0, 0, 0.65);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    input {
+      background: #f0f0f0;
+      color: #333;
+    }
+    select {
+      background: #fefefe;
+      color: #000;
+    }
+    button {
+      background: #00cc88;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #00b378;
+    }
+    #result {
+      margin-top: 25px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 8px;
+      font-size: 18px;
+    }
+    a {
+      color: #00ccff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    code {
+      font-family: monospace;
+      color: #ffc;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>🎉 TIFFY Presale Calculator</h2>
+    <p>Select your currency and enter how much you want to invest:</p>
+
+    <select id="currencySelect">
+      <option value="EUR">EUR (Euro)</option>
+      <option value="USD">USD (US Dollar)</option>
+      <option value="GBP">GBP (British Pound)</option>
+      <option value="ZAR">ZAR (South African Rand)</option>
+      <option value="NGN">NGN (Naira)</option>
+    </select>
+
+    <input type="number" id="amountInput" placeholder="Enter amount">
+    <button onclick="calculate()">Calculate TIFFY</button>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const currencyRates = {
+      EUR: 1.10,
+      USD: 1.00,
+      GBP: 1.28,
+      ZAR: 0.055,
+      NGN: 0.00067
+    };
+
+    async function calculate() {
+      const amount = parseFloat(document.getElementById('amountInput').value);
+      const currency = document.getElementById('currencySelect').value;
+      const resultDiv = document.getElementById('result');
+
+      if (isNaN(amount) || amount <= 0) {
+        resultDiv.innerHTML = "❗ Please enter a valid amount.";
+        return;
+      }
+
+      try {
+        const res = await fetch("https://tiffyai.github.io/TIFFY-Market-Value/price.json");
+        const data = await res.json();
+
+        const tiffyToUsd = parseFloat(data.tiffyToUSD);
+        const lastUpdated = new Date(data.lastUpdated).toLocaleString();
+
+        const usdValue = amount * currencyRates[currency];
+        const baseTiffy = usdValue / tiffyToUsd;
+        const bonusTiffy = baseTiffy * 2;  // 2x Presale
+        const roundedTiffy = Math.round(bonusTiffy * 100) / 100;
+
+        const paypalLink = `https://www.paypal.me/CatHostProWebsites/${amount}`;
+
+        resultDiv.innerHTML = `
+          <p>💱 <strong>${amount} ${currency}</strong> ≈ <strong>${usdValue.toFixed(2)} USD</strong></p>
+          <p>🎯 Current TIFFY Price: <strong>$${tiffyToUsd.toFixed(4)}</strong></p>
+          <p>🔥 You will receive: <strong>${roundedTiffy} TIFFY</strong> (2× Presale Bonus)</p>
+          <p>🟢 <strong>PayPal will automatically convert your ${currency} to USD.</strong></p>
+          <p>👉 <a href="${paypalLink}" target="_blank">Click here to pay ${amount} ${currency} via PayPal</a></p>
+          <p>📩 After payment, <strong><a href="https://wa.me/c/27766314246" target="_blank">send your BNB wallet address via WhatsApp</a></strong>.</p>
+          <p>🕓 Price last updated: <code>${lastUpdated}</code></p>
+        `;
+      } catch (err) {
+        resultDiv.innerHTML = "⚠️ Error fetching live TIFFY price. Please try again soon.";
+        console.error(err);
+      }
+    }
+  </script>
+
+</body>
+</html>
