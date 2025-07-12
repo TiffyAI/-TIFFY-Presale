@@ -91,7 +91,6 @@
         const data = await res.json();
 
         const tiffyToUsd = parseFloat(data.tiffyToUSD);
-        const tiffyToWBNB = parseFloat(data.tiffyToWBNB);
         const lastUpdated = new Date(data.lastUpdated).toLocaleString();
 
         const eurToUsdRate = 1.1;
@@ -101,7 +100,8 @@
         const bonusTiffy = baseTiffy * 2;
         const roundedTiffy = Math.round(bonusTiffy * 100) / 100;
 
-        const paypalLink = `https://www.paypal.me/CatHostProWebsites/profile/${eur}`;
+        // ✅ Correct PayPal.Me structure
+        const paypalLink = `https://www.paypal.me/CatHostProWebsites/${eur}`;
 
         resultDiv.innerHTML = `
           <p>💶 <strong>€${eur}</strong> = approx <strong>${usdValue.toFixed(2)} USD</strong></p>
