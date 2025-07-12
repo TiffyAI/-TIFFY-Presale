@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TIFFY Presale Calculator</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+    input, button { padding: 12px; font-size: 16px; margin-top: 10px; width: 100%; box-sizing: border-box; }
+    #result { margin-top: 25px; font-size: 18px; background: #f4f4f4; padding: 15px; border-radius: 8px; }
+    a { color: #0070f3; font-weight: bold; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <h2>🎉 TIFFY Presale Calculator</h2>
+  <p>Enter how much <strong>EUR</strong> you want to invest:</p>
+  <input type="number" id="eurInput" placeholder="Amount in EUR">
+  <button onclick="calculate()">Calculate TIFFY</button>
+
+  <div id="result"></div>
+
+  <script>
+    async function calculate() {
+      const eur = parseFloat(document.getElementById('eurInput').value);
+      if (isNaN(eur) || eur <= 0) {
+        document.getElementById('result').innerHTML = "❗ Please enter a valid EUR amount.";
+        return;
+      }
+
+      try {
+        // Get live TIFFY price data
+        const res = await fetch("https://tiffyai.github.io/TIFFY-Market-Value/price.json");
+        const data = await res.json();
+
+        const tiffyToUsd = parseFloat(data.tiffyToUSD);
+        const eurToUsd = 1.1; // Estimate EUR→USD rate, can update to use live FX later
+        const usdValue = eur * eurToUsd;
+
+        // Calculate TIFFY amount, with 2× presale bonus
+        const tiffyAmount = (usdValue / tiffyToUsd) * 2;
+        const roundedTiffy = Math.round(tiffyAmount * 100) / 100;
+
+        const paypalLink = `https://www.paypal.com/paypalme/quentenmeyer/${eur}`;
+
+        document.getElementById('result').innerHTML = `
+          <p>💶 <strong>€${eur}</strong> converts to approx <strong>${roundedTiffy} TIFFY</strong> at presale rate (2× bonus).</p>
+          <p>👉 <a href="${paypalLink}" target="_blank">Click here to pay €${eur} via PayPal</a></p>
+          <p>📩 After payment, send your wallet address to us via email or Telegram.</p>
+          <p>🕓 Last Price Update: <code>${data.lastUpdated}</code></p>
+        `;
+      } catch (err) {
+        document.getElementById('result').innerHTML = "⚠️ Error fetching price. Try again shortly.";
+        console.error(err);
+      }
+    }
+  </script>
+
+</body>
+</html>
