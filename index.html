@@ -91,11 +91,11 @@
 
   <script>
     const currencyRates = {
-      EUR: 1.10,   // EUR → USD
-      USD: 1.00,   // USD → USD
-      GBP: 1.28,   // GBP → USD
-      ZAR: 0.055,  // ZAR → USD
-      NGN: 0.00067 // NGN → USD
+      EUR: 1.10,
+      USD: 1.00,
+      GBP: 1.28,
+      ZAR: 0.055,
+      NGN: 0.00067
     };
 
     async function calculate() {
@@ -117,16 +117,15 @@
 
         const usdValue = amount * currencyRates[currency];
         const baseTiffy = usdValue / tiffyToUsd;
-        const bonusTiffy = baseTiffy * 2;
+        const bonusTiffy = baseTiffy * 1.5; // ✅ 50% bonus
         const roundedTiffy = Math.round(bonusTiffy * 100) / 100;
 
-        // Create PayPal link (NOTE: currency code won't auto-convert, so display instruction)
         const paypalLink = `https://www.paypal.me/CatHostProWebsites/${amount}`;
 
         resultDiv.innerHTML = `
           <p>💱 <strong>${amount} ${currency}</strong> = approx <strong>${usdValue.toFixed(2)} USD</strong></p>
           <p>🎯 Current TIFFY Price: <strong>$${tiffyToUsd.toFixed(4)}</strong></p>
-          <p>🔥 Presale Bonus Applied: <strong>${roundedTiffy} TIFFY</strong></p>
+          <p>🔥 Presale Bonus (50% extra): <strong>${roundedTiffy} TIFFY</strong></p>
           <p>👉 <a href="${paypalLink}" target="_blank">Click here to pay ${amount} ${currency} via PayPal</a></p>
           <p>📩 After payment, <strong><a href="https://wa.me/c/27766314246" target="_blank">send your BNB wallet address via WhatsApp</a></strong>.</p>
           <p>🕓 Price last updated: <code>${lastUpdated}</code></p>
