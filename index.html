@@ -4,52 +4,116 @@
   <meta charset="UTF-8">
   <title>TIFFY Presale Calculator</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
-    input, button { padding: 12px; font-size: 16px; margin-top: 10px; width: 100%; box-sizing: border-box; }
-    #result { margin-top: 25px; font-size: 18px; background: #f4f4f4; padding: 15px; border-radius: 8px; }
-    a { color: #0070f3; font-weight: bold; text-decoration: none; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('TIFFY.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    }
+    .container {
+      max-width: 600px;
+      margin: 60px auto;
+      background: rgba(0, 0, 0, 0.65);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input, button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    input {
+      background: #f0f0f0;
+      color: #333;
+    }
+    button {
+      background: #00cc88;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #00b378;
+    }
+    #result {
+      margin-top: 25px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 8px;
+      font-size: 18px;
+    }
+    a {
+      color: #00ccff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    code {
+      font-family: monospace;
+      color: #ffc;
+    }
   </style>
 </head>
 <body>
 
-  <h2>🎉 TIFFY Presale Calculator</h2>
-  <p>Enter how much <strong>EUR</strong> you want to invest:</p>
-  <input type="number" id="eurInput" placeholder="Amount in EUR">
-  <button onclick="calculate()">Calculate TIFFY</button>
+  <div class="container">
+    <h2>🎉 TIFFY Presale Calculator</h2>
+    <p>Enter how much <strong>EUR</strong> you want to invest:</p>
+    <input type="number" id="eurInput" placeholder="Amount in EUR">
+    <button onclick="calculate()">Calculate TIFFY</button>
 
-  <div id="result"></div>
+    <div id="result"></div>
+  </div>
 
   <script>
     async function calculate() {
       const eur = parseFloat(document.getElementById('eurInput').value);
+      const resultDiv = document.getElementById('result');
+
       if (isNaN(eur) || eur <= 0) {
-        document.getElementById('result').innerHTML = "❗ Please enter a valid EUR amount.";
+        resultDiv.innerHTML = "❗ Please enter a valid EUR amount.";
         return;
       }
 
       try {
-        // Get live TIFFY price data
+        // Fetch your live price JSON
         const res = await fetch("https://tiffyai.github.io/TIFFY-Market-Value/price.json");
         const data = await res.json();
 
         const tiffyToUsd = parseFloat(data.tiffyToUSD);
-        const eurToUsd = 1.1; // Estimate EUR→USD rate, can update to use live FX later
-        const usdValue = eur * eurToUsd;
+        const tiffyToWBNB = parseFloat(data.tiffyToWBNB);
+        const lastUpdated = new Date(data.lastUpdated).toLocaleString();
 
-        // Calculate TIFFY amount, with 2× presale bonus
-        const tiffyAmount = (usdValue / tiffyToUsd) * 2;
-        const roundedTiffy = Math.round(tiffyAmount * 100) / 100;
+        const eurToUsdRate = 1.1; // Approximate EUR to USD
+        const usdValue = eur * eurToUsdRate;
+
+        const baseTiffy = usdValue / tiffyToUsd;
+        const bonusTiffy = baseTiffy * 2;
+        const roundedTiffy = Math.round(bonusTiffy * 100) / 100;
 
         const paypalLink = `https://www.paypal.com/paypalme/quentenmeyer/${eur}`;
 
-        document.getElementById('result').innerHTML = `
-          <p>💶 <strong>€${eur}</strong> converts to approx <strong>${roundedTiffy} TIFFY</strong> at presale rate (2× bonus).</p>
+        resultDiv.innerHTML = `
+          <p>💶 <strong>€${eur}</strong> = approx <strong>${usdValue.toFixed(2)} USD</strong></p>
+          <p>🎯 Current TIFFY Price: <strong>$${tiffyToUsd.toFixed(4)}</strong></p>
+          <p>🔥 Presale Bonus Applied: <strong>${roundedTiffy} TIFFY</strong></p>
           <p>👉 <a href="${paypalLink}" target="_blank">Click here to pay €${eur} via PayPal</a></p>
-          <p>📩 After payment, send your wallet address to us via email or Telegram.</p>
-          <p>🕓 Last Price Update: <code>${data.lastUpdated}</code></p>
+          <p>📩 After payment, send us your wallet address via email or Telegram.</p>
+          <p>🕓 Price last updated: <code>${lastUpdated}</code></p>
         `;
       } catch (err) {
-        document.getElementById('result').innerHTML = "⚠️ Error fetching price. Try again shortly.";
+        resultDiv.innerHTML = "⚠️ Error fetching live TIFFY price. Please try again soon.";
         console.error(err);
       }
     }
