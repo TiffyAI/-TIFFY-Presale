@@ -87,7 +87,6 @@
       }
 
       try {
-        // Fetch your live price JSON
         const res = await fetch("https://tiffyai.github.io/TIFFY-Market-Value/price.json");
         const data = await res.json();
 
@@ -95,21 +94,21 @@
         const tiffyToWBNB = parseFloat(data.tiffyToWBNB);
         const lastUpdated = new Date(data.lastUpdated).toLocaleString();
 
-        const eurToUsdRate = 1.1; // Approximate EUR to USD
+        const eurToUsdRate = 1.1;
         const usdValue = eur * eurToUsdRate;
 
         const baseTiffy = usdValue / tiffyToUsd;
         const bonusTiffy = baseTiffy * 2;
         const roundedTiffy = Math.round(bonusTiffy * 100) / 100;
 
-        const paypalLink = `https://www.paypal.com/paypalme/Cat Host Pro Websites/${eur}`;
+        const paypalLink = `https://www.paypal.com/paypalme/quentenmeyer/${eur}`;
 
         resultDiv.innerHTML = `
           <p>💶 <strong>€${eur}</strong> = approx <strong>${usdValue.toFixed(2)} USD</strong></p>
           <p>🎯 Current TIFFY Price: <strong>$${tiffyToUsd.toFixed(4)}</strong></p>
           <p>🔥 Presale Bonus Applied: <strong>${roundedTiffy} TIFFY</strong></p>
           <p>👉 <a href="${paypalLink}" target="_blank">Click here to pay €${eur} via PayPal</a></p>
-          <p>📩 After payment, send us your wallet address via email or Telegram.</p>
+          <p>📩 After payment, <strong><a href="https://wa.me/c/27766314246" target="_blank">send your BNB wallet address via WhatsApp</a></strong>.</p>
           <p>🕓 Price last updated: <code>${lastUpdated}</code></p>
         `;
       } catch (err) {
